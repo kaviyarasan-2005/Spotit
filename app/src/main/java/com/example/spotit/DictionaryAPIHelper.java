@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DictionaryAPIHelper {
-    private static final String API_KEY = "0bc54eebea9002065db999261ba3721d580cd36c9083d93dbc84a82f35e8bf16";
+    private static final String API_KEY = "fd1586319d6c0061921f4194e28e4a4b76d5080570684737aaf21c11cfa6bec8";
 
     public interface Callback {
         void onResult(String result);

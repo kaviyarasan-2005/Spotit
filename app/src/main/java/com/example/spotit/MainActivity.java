@@ -1,6 +1,9 @@
 package com.example.spotit;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -128,17 +131,17 @@ public class MainActivity extends AppCompatActivity {
     }
     private void fetchMeaning(String word) {
         if (wordCache.containsKey(word)) {
-            showTopDialog(wordCache.get(word)); // Use cached meaning
+            showTopDialog(wordCache.get(word),null); // Use cached meaning
         } else {
             executorService.execute(() -> { // Run API call in background
                 DictionaryAPIHelper.fetchMeaning(word, result -> {
                     wordCache.put(word, result); // Cache result
-                    runOnUiThread(() -> showTopDialog(result)); // Update UI safely
+                    runOnUiThread(() -> showTopDialog(result,word)); // Update UI safely
                 });
             });
         }
     }
-    private void showTopDialog(String message) {
+    private void showTopDialog(String message,String word) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.top_dialog);
 
@@ -155,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
         Button btnOk = dialog.findViewById(R.id.btnOk);
         btnOk.setOnClickListener(v -> dialog.dismiss());
 
+        Button btnCopy = dialog.findViewById(R.id.btnCopy);
+        btnCopy.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Copied Text", word);
+            clipboard.setPrimaryClip(clip);
+        });
         dialog.show();
     }
 }
