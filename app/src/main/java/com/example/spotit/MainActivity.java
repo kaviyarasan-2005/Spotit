@@ -19,7 +19,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
+
+    private final HashMap<String, String> wordCache = new HashMap<>(); // Caching meanings
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(); // Background thread
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView textView = findViewById(R.id.textView);
-
-        // Text that will be clickable
-        String fullText = "Tap on any word to see its meaning! development";
+        String fullText = "Tap on any word to see its meaning! Development and dedication is key to success.";
         textView.setText(fullText);
 
         makeTextClickable(textView, fullText);
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    fetchMeaning(word); // Fetch and show meaning
+                    fetchMeaning(word);
                 }
 
                 @Override
@@ -66,9 +71,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchMeaning(String word) {
-        DictionaryAPIHelper.fetchMeaning(word, result -> {
-            showTopDialog(result); // Show the meaning in the top dialog
-        });
+        if (wordCache.containsKey(word)) {
+            showTopDialog(wordCache.get(word)); // Use cached meaning
+        } else {
+            executorService.execute(() -> { // Run API call in background
+                DictionaryAPIHelper.fetchMeaning(word, result -> {
+                    wordCache.put(word, result); // Cache result
+                    runOnUiThread(() -> showTopDialog(result)); // Update UI safely
+                });
+            });
+        }
     }
 
     private void showTopDialog(String message) {
