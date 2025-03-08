@@ -14,48 +14,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-private String Fetch;
-private EditText wordInput;
-private Button searchButton;
-private  TextView resultView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         TextView textView = findViewById(R.id.textView);
-        wordInput = findViewById(R.id.wordInput);
-        searchButton = findViewById(R.id.searchButton);
-        resultView = findViewById(R.id.resultView);
-        // Dynamically set text
-        searchButton.setOnClickListener(view -> {
-            String w = wordInput.getText().toString().trim();
-            if(!w.isEmpty()){
-                fetchMeaning(w);
-            }
-            else{
-                resultView.setText("Please enter the word");
-            }
-        });
-        String fullText = "Tap on any word to see a Dialog message!";
 
+        // Text that will be clickable
+        String fullText = "Tap on any word to see its meaning! development";
         textView.setText(fullText);
 
         makeTextClickable(textView, fullText);
     }
-    private void fetchMeaning(String w){
-        DictionaryAPIHelper.fetchMeaning(w,result -> {
-            Fetch = result;
-            resultView.setText(Fetch);
-        });
-    }
+
     private void makeTextClickable(TextView textView, String fullText) {
         SpannableString spannableString = new SpannableString(fullText);
         String[] words = fullText.split(" ");
@@ -68,42 +47,46 @@ private  TextView resultView;
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    // Show Top Dialog instead of Toast
-                    showTopDialog("You clicked: " + word);
+                    fetchMeaning(word); // Fetch and show meaning
                 }
 
                 @Override
                 public void updateDrawState(@NonNull TextPaint ds) {
-                    ds.setUnderlineText(false); // Remove underline
-                    ds.setColor(Color.WHITE);   // Optional: Change color when clickable
+                    ds.setUnderlineText(false);
+                    ds.setColor(Color.WHITE);
                 }
             };
 
             spannableString.setSpan(clickableSpan, wordStart, wordEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            startIndex = wordEnd + 1; // Move to next word (+1 for space)
+            startIndex = wordEnd + 1;
         }
 
         textView.setText(spannableString);
-        textView.setMovementMethod(LinkMovementMethod.getInstance()); // Enable word clicking
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void fetchMeaning(String word) {
+        DictionaryAPIHelper.fetchMeaning(word, result -> {
+            showTopDialog(result); // Show the meaning in the top dialog
+        });
     }
 
     private void showTopDialog(String message) {
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.top_dialog); // Use custom dialog layout
+        dialog.setContentView(R.layout.top_dialog);
 
-        // Set dialog position to top
         Window window = dialog.getWindow();
         if (window != null) {
-            window.setGravity(Gravity.TOP); // Moves the dialog to the top
+            window.setGravity(Gravity.TOP);
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Transparent background
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        TextView textView1 = dialog.findViewById(R.id.textViewDialog);
-        textView1.setText(message);
+        TextView textViewDialog = dialog.findViewById(R.id.textViewDialog);
+        textViewDialog.setText(message);
 
         Button btnOk = dialog.findViewById(R.id.btnOk);
-        btnOk.setOnClickListener(v -> dialog.dismiss()); // Close Dialog on Button Click
+        btnOk.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
     }

@@ -7,27 +7,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <EditText
-        android:id="@+id/wordInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter word"
-        tools:ignore="MissingConstraints"
-        />
+<!--    <EditText-->
+<!--        android:id="@+id/wordInput"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Enter word"-->
+<!--        tools:ignore="MissingConstraints"-->
+<!--        />-->
 
-    <Button
-        android:id="@+id/searchButton"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="search"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/resultView"
-        android:textSize="40dp"
-        android:text="Text will appear here" />
+<!--    <Button-->
+<!--        android:id="@+id/searchButton"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="search"-->
+<!--        />-->
+<!--    <TextView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/resultView"-->
+<!--        android:textSize="40dp"-->
+<!--        android:text="Text will appear here" />-->
 
     <TextView
         android:id="@+id/textView"
